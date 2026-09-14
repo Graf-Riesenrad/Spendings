@@ -16,6 +16,7 @@ $(document).ready(function() {
 
 function prepareFilterForm() {
     const today = new Date();
+    
     const startDate = dateFns.startOfMonth(today);
     const endDate = today;
 
