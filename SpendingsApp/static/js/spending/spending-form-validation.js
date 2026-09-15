@@ -23,8 +23,13 @@ const SPENDING_FORM_MESSAGES = {
     category: "Please select a category"
 };
 
-function validateSpendingForm(formId) {
-    $(formId).validate({
+export function initSpendingFormValidation(formId) {
+    if (typeof $(`#${formId}`).validate !== 'function') {
+        console.warn('jQuery Validate plugin not found — client-side validation disabled for', formId);
+        return;
+    }
+
+    $(`#${formId}`).validate({
         rules: SPENDING_FORM_RULES,
         messages: SPENDING_FORM_MESSAGES
     });

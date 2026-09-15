@@ -27,7 +27,7 @@
         </div>
         <div class="row mb-3">
             <div class="col">
-                <button id="edit-spending-api-button" type="button" class="btn btn-outline-secondary form-control">
+                <button id="edit-spending-button" type="button" class="btn btn-outline-secondary form-control">
                     <i class="bi bi-save"></i>
                 </button>
             </div>
@@ -40,6 +40,5 @@
 
 {% block extra_scripts %}
 {% load static %}
-<script src="{% static 'js/spending-form-validation.js' %}"></script>
-<script src="{% static 'js/edit-spending.js' %}"></script>
+<script type="module"src="{% static 'js/spending/edit-spending.js' %}"></script>
 {% endblock %}

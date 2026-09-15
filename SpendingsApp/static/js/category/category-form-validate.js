@@ -17,13 +17,13 @@ const CATEGORY_FORM_MESSAGES = {
     }
 };
 
-export function validateCategoryForm(formId) {
-    if (typeof $(formId).validate !== 'function') {
+export function initCategoryFormValidation(formId) {
+    if (typeof $(`#${formId}`).validate !== 'function') {
         console.warn('jQuery Validate plugin not found — client-side validation disabled for', formId);
         return;
     }
 
-    $(formId).validate({
+    $(`#${formId}`).validate({
         rules: CATEGORY_VALIDATE_RULES,
         messages: CATEGORY_FORM_MESSAGES
     });
