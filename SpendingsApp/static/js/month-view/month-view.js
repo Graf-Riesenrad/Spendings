@@ -1,37 +1,51 @@
 
 import { renderMonthTable } from './month-table-renderer.js';
+import { initMonthFormValidation } from './month-form-validate.js';
 
 
 (function() {
-    
+
     $(document).ready(function() {
-    const form = document.getElementById('month-form');
+        const form = document.getElementById('month-form');
         if(!form) 
             return;
 
+        initMonthFormValidation('month-form');
+
         form.addEventListener('submit', function(ev) {
             ev.preventDefault();
-            updateMonthTable();
         });
+
+        form.addEventListener('change', updateMonthTable);
 
         updateMonthTable();
     });
 
     async function updateMonthTable() {
         const form = document.getElementById('month-form');
-        if(!form) {
-            console.log('Form not found');
+        if(!form || !$(form).valid()) {
+            console.log('Form not found or invalid');
             return;
         }
 
         const monthField = form.querySelector('[name="month"]');
         const yearField = form.querySelector('[name="year"]');
-        if(!monthField || !yearField) {
+        if (!monthField || !yearField) {
             console.log('Month or year field not found');
             return;
         }
+
+        const yearValue = yearField.value;
+        if (yearValue.length !== 4)
+            return;
         
-        const spendings = await getSpendingsForMonth(monthField.value, yearField.value);
+        let spendings = [];
+        try {
+            spendings = await getSpendingsForMonth(monthField.value, yearField.value);
+        }
+        catch (error) {
+            console.error('Error updating month table', error);
+        }
         renderMonthTable(spendings);
     }
 

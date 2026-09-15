@@ -8,7 +8,7 @@ export function renderMonthTable(spendings) {
 
     if (table.querySelector('tfoot')) table.querySelector('tfoot').remove();
 
-    if(!spendings || spendings.length === 0){
+    if(!spendings || spendings.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
 

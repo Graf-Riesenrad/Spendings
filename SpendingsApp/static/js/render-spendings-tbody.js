@@ -7,8 +7,8 @@ export function renderSpendingsTbody(spendings) {
         const tr = document.createElement('tr');
 
         const dateTd = document.createElement('td');
-        const d = new Date(spending.spendingDate);
-        dateTd.textContent = d.toLocaleDateString();
+        const d = dateFns.parseISO(spending.spendingDate);
+        dateTd.textContent = dateFns.format(d, 'dd.MM.yyyy');
 
         const categoryTd = document.createElement('td');
         categoryTd.textContent = spending.category.name;
