@@ -7,7 +7,8 @@ const VALIDATION_RULES = {
     },
     "end_date": {
         required: true,
-        date: true
+        date: true,
+        greaterThanStart: true
     },
     "description": {
         required: false,
@@ -37,7 +38,8 @@ const VALIDATION_MESSAGES = {
     },
     "end_date": {
         required: "Please enter an end date",
-        date: "Please enter a valid date"
+        date: "Please enter a valid date",
+        greaterThanStart: "End date must be greater than start date"
     },
     "description": {
         minlength: "Description must be at least 3 characters long",
@@ -69,13 +71,27 @@ $.validator.addMethod("greaterThanMin", function(value, _element) {
     return maxAmount > minAmount;
 }, "Maximum amount must be greater than minimum amount");
 
-export function validateFilterForm(formId) {
-    if (typeof $(formId).validate !== 'function') {
+$.validator.addMethod("greaterThanStart", function(value, _element) {
+    const startDate = new Date($("#id_start_date").val());
+    const endDate = new Date(value);
+
+    if (isNaN(startDate.getTime()) || $("#id_start_date").val().trim() === "")
+        return true;
+
+    if (isNaN(endDate.getTime()) || value.trim() === "")
+        return true;
+
+    return endDate > startDate;
+
+}, "End date must be greater than start date");
+
+export function initFilterformValidation(formId) {
+    if (typeof $(`#${formId}`).validate !== 'function') {
         console.warn('jQuery Validate plugin not found — client-side validation disabled for', formId);
         return;
     }
 
-    $(formId).validate({
+    $(`#${formId}`).validate({
         rules: VALIDATION_RULES,
         messages: VALIDATION_MESSAGES
     });

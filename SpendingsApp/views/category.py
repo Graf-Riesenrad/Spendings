@@ -46,8 +46,9 @@ class CategoryEditApi(AuthenticatedView):
     def post(self, request: HttpRequest, id: int) -> HttpResponse:
         try:
             category = get_category_from_id(id, request.user)
-        except ValueError as error:
-            return HttpResponseBadRequest(str(error))
+        except ValueError:
+            message = "Category does not exist."
+            return JsonResponse({"message": message}, status=HTTPStatus.UNPROCESSABLE_ENTITY)
         
         category_form = CategoryForm(request.POST, instance=category)
         if not category_form.is_valid():
@@ -55,7 +56,8 @@ class CategoryEditApi(AuthenticatedView):
         
         name = category_form.cleaned_data['name']
         if is_category_name_used_by_user(name, request.user):
-            return HttpResponseBadRequest(f"Another of your categories already has the name '{name}'.")
+            message = "You already have a category with this name."
+            return JsonResponse({"message": message}, status=HTTPStatus.CONFLICT)
 
         category_form.save()
 

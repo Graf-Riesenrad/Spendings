@@ -1,12 +1,15 @@
 
-import { validateFilterForm } from "./filter-form-validate.js";
-import { renderSpendingsTbody } from "./render-spendings-tbody.js";
+import { initFilterformValidation } from "./filter-form-validate.js";
+import { renderSpendingsTbody } from "../render-spendings-tbody.js";
+
+
+const FILTER_FORM_ID = 'filter-form';
 
 $(document).ready(function() {
     prepareFilterForm();
     updateSpendings();
     
-    const form = document.getElementById('filter-form');
+    const form = document.getElementById(FILTER_FORM_ID);
     form.addEventListener('change', updateSpendings);
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -15,9 +18,12 @@ $(document).ready(function() {
 });
 
 function prepareFilterForm() {
+    initFilterformValidation(FILTER_FORM_ID);
+
     const today = new Date();
     
-    const startDate = dateFns.startOfMonth(today);
+    const startOfMonth = dateFns.startOfMonth(today);
+    const startDate = dateFns.subMonths(startOfMonth, 2);
     const endDate = today;
 
     const startDateInput = document.getElementById('id_start_date');
@@ -28,10 +34,11 @@ function prepareFilterForm() {
 };
 
 async function updateSpendings() {
-    validateFilterForm("#filter-form");
-    if (!$("#filter-form").valid())
+    const form = document.getElementById(FILTER_FORM_ID);
+    if (!$(form).valid()){
+        clearSpendingsTable();
         return;
-    
+    }
 
     const spendings = await fetchSpendings();
     const spendingsCount = spendings.length;
@@ -90,4 +97,11 @@ async function fetchSpendings() {
         alert("Error loading spendings. Check console.");
         throw xhr;
     }
+}
+
+function clearSpendingsTable() {
+    const tableBody = document.getElementById('spendings-table-body');
+    console.log("Clearing spendings table");
+    if (tableBody) 
+        tableBody.innerHTML = '';
 }

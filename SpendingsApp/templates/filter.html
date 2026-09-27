@@ -64,9 +64,8 @@
 
 {% block extra_scripts %}
 {% load static %}
-<script type="module" src="{% static 'js/filter-view.js' %}"></script>
-<script type="module" src="{% static 'js/category-form-validate.js' %}"></script>
-<script type="module" src="{% static 'js/delete-spending.js' %}"></script>
+<script type="module" src="{% static 'js/filter/filter-view.js' %}"></script>
+<script type="module" src="{% static 'js/spending/delete-spending.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const categoriesSelect = document.getElementById('id_categories');

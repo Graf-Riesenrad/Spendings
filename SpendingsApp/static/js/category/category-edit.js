@@ -15,28 +15,34 @@ $(document).ready(function() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-
-        if (!$(form).valid()) 
-            return;
-        
-
-        const formData = new FormData(form);
-        const url = form.getAttribute("url");
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(_data) {
-            showMessageBox("Category edited successfully.", "success");
-        }).fail(function(xhr, _status, error) {
-            console.error("Error status:", xhr.status);
-            console.error("Error response:", xhr.responseText);
-            console.error("Error message:", error);
-            showMessageBox("Error editing category. Please check the console.", "error");
-        });
+        editCategory();
     });
 });
 
+
+function editCategory() {
+    const form = document.getElementById(CATEGORY_FORM_ID);
+
+    if (!$(form).valid()) 
+        return;
+    
+    const formData = new FormData(form);
+    const url = form.getAttribute("url");
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: formData,
+        processData: false,
+        contentType: false
+    }).done(function(_data) {
+        showMessageBox("Category edited successfully.", "success");
+    }).fail(function(xhr, _status, error) {
+        console.error("Error status:", xhr.status);
+        console.error("Error response:", xhr.responseText);
+        console.error("Error message:", error);
+
+        const message = xhr.responseJSON?.message || "Unknown error occurred.";
+        showMessageBox(`Could not edit category: ${message}` , "error");
+    });
+}
