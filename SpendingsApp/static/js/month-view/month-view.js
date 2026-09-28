@@ -1,6 +1,9 @@
 
 import { renderMonthTable } from './month-table-renderer.js';
 import { initMonthFormValidation } from './month-form-validate.js';
+import { MonthOfYear } from './month-of-year.js';
+import { getNextMonth, getPreviousMonth, monthOfYearToDate } from './jump-month.js';
+
 
 
 (function() {
@@ -18,9 +21,51 @@ import { initMonthFormValidation } from './month-form-validate.js';
 
         form.addEventListener('change', updateMonthTable);
 
+        const monthUpBtn = document.getElementById('month-up-btn');
+        if (monthUpBtn) {
+            monthUpBtn.addEventListener('click', function(ev) {
+                ev.preventDefault();
+                monthUp();
+            });
+        }
+        
+        const monthDownBtn = document.getElementById('month-down-btn');
+        if (monthDownBtn) {
+            monthDownBtn.addEventListener('click', function(ev) {
+                ev.preventDefault();
+                monthDown();
+            });
+        }
+
         updateMonthTable();
     });
-
+    
+    function monthUp() {
+        const actualMonth = getActualMonthOfYear();
+        const nextMonth = getNextMonth(actualMonth);
+        setMonthOfYearAndUpdate(nextMonth);
+    }
+    
+    function monthDown() {
+        const actualMonth = getActualMonthOfYear();
+        const prevMonth = getPreviousMonth(actualMonth);
+        setMonthOfYearAndUpdate(prevMonth);
+    }
+    
+    function getActualMonthOfYear() {
+        const monthSelect = document.getElementById("id_month")
+        const yearSelect = document.getElementById("id_year");
+        return new MonthOfYear(monthSelect.value, parseInt(yearSelect.value));
+    }
+    
+    function setMonthOfYearAndUpdate(monthOfYear) {
+        const monthSelect = document.getElementById("id_month")
+        const yearSelect = document.getElementById("id_year");
+        monthSelect.value = monthOfYear.monthName.toUpperCase();
+        yearSelect.value = monthOfYear.year;
+        updateMonthTable();
+    }
+    
     async function updateMonthTable() {
         const form = document.getElementById('month-form');
         if(!form || !$(form).valid()) {
@@ -39,9 +84,10 @@ import { initMonthFormValidation } from './month-form-validate.js';
         if (yearValue.length !== 4)
             return;
         
+        const actualMonth = new MonthOfYear(monthField.value, parseInt(yearField.value));
         let spendings = [];
         try {
-            spendings = await getSpendingsForMonth(monthField.value, yearField.value);
+            spendings = await getSpendingsForMonth(actualMonth);
         }
         catch (error) {
             console.error('Error updating month table', error);
@@ -49,10 +95,10 @@ import { initMonthFormValidation } from './month-form-validate.js';
         renderMonthTable(spendings);
     }
 
-    async function getSpendingsForMonth(monthName, year) {
+    async function getSpendingsForMonth(monthOfYear) {
         let parsed;
         try {
-            parsed = parseMonthYear(monthName, year);
+            parsed = monthOfYearToDate(monthOfYear);
         } catch (error) {
             console.error('Error parsing month/year', error); // TODO: Show user-friendly error message
             throw error; 
@@ -76,22 +122,4 @@ import { initMonthFormValidation } from './month-form-validate.js';
             throw xhr;
         }
     }
-
-    function parseMonthYear(monthName, year) {
-        const monthLabel = String(monthName).toLowerCase();
-        const monthLabelCap = firstToUpperCase(monthLabel);
-
-        const parsed = dateFns.parse(`${monthLabelCap} ${year}`, 'MMMM yyyy', new Date());
-        if (!dateFns.isValid(parsed)) 
-            throw new Error('Invalid month/year');
-        
-        return parsed;
-    }
-
-    function firstToUpperCase(str) {
-        if (!str) 
-            return '';
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
 })();
