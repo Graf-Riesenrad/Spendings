@@ -12,6 +12,27 @@ from SpendingsApp.database_gateways.finance.monthly_average.monthly_average_data
 from SpendingsApp.finance.monthly_average.monthly_average_calculator import MonthlyAverageCalculator
 from SpendingsApp.request_data_preparation.monthly_average.monthly_average_data_preparer import MonthlyAverageDataPreparer
 
+from SpendingsApp.factories import YearReportApiFactory
+
+class YearReportApi(AuthenticatedView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._year_report_assembler = YearReportApiFactory.make_year_report_assembler()
+        self._year_report_data_extractor = YearReportApiFactory.make_year_data_extractor()
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        input_data = {
+            'year': request.GET.get('year'),
+            'user': request.user,
+        }
+        try:
+            extracted_data = self._year_report_data_extractor.extract_year_report_data(input_data)
+        except ValueError as e:
+            return HttpResponseBadRequest(str(e))
+
+        year_report = self._year_report_assembler.assemble_year_report(extracted_data.year, extracted_data.user)
+        return JsonResponse({'year_report': asdict(year_report)}, status=HTTPStatus.OK)
+    
 
 class MonthlyAverageApi(AuthenticatedView):
     def __init__(self, **kwargs):

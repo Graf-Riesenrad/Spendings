@@ -36,7 +36,7 @@ def test_get_year_report_raises_for_negative_year(
     negative_year: int,
 ):
     with pytest.raises(ValueError):
-        make_assembler.get_year_report2(negative_year, TEST_USER)
+        make_assembler.assemble_year_report(negative_year, TEST_USER)
 
     category_report_gateway.get_category_reports.assert_not_called()
 
@@ -53,7 +53,7 @@ def test_get_year_report_negative_year_error_message(
     make_assembler: YearReportAssembler, negative_year: int, expected_message: str,
 ):
     with pytest.raises(ValueError) as exc_info:
-        make_assembler.get_year_report2(negative_year, TEST_USER)
+        make_assembler.assemble_year_report(negative_year, TEST_USER)
 
     assert str(exc_info.value) == expected_message
 
@@ -69,7 +69,7 @@ def test_get_year_report_requests_reports_for_given_year_and_user(
 ):
     category_report_gateway.get_category_reports.return_value = []
 
-    make_assembler.get_year_report2(year, user)
+    make_assembler.assemble_year_report(year, user)
 
     category_report_gateway.get_category_reports.assert_called_once_with(year, user)
 
@@ -81,7 +81,7 @@ def test_get_year_report_sets_year_and_user(
 ):
     category_report_gateway.get_category_reports.return_value = []
 
-    report = make_assembler.get_year_report2(year, user)
+    report = make_assembler.assemble_year_report(year, user)
 
     assert report.year == year
     assert report.user == user
@@ -103,7 +103,7 @@ def test_get_year_report_contains_category_reports_from_gateway(
     category_reports = [make_category_report(i + 1, total) for i, total in enumerate(category_totals)]
     category_report_gateway.get_category_reports.return_value = category_reports
 
-    report = make_assembler.get_year_report2(TEST_YEAR, TEST_USER)
+    report = make_assembler.assemble_year_report(TEST_YEAR, TEST_USER)
 
     assert report.category_reports == category_reports
 
@@ -125,7 +125,7 @@ def test_get_year_report_yearly_total_is_sum_of_category_yearly_totals(
     category_reports = [make_category_report(i + 1, total) for i, total in enumerate(category_totals)]
     category_report_gateway.get_category_reports.return_value = category_reports
 
-    report = make_assembler.get_year_report2(TEST_YEAR, TEST_USER)
+    report = make_assembler.assemble_year_report(TEST_YEAR, TEST_USER)
 
     expected = expected_yearly_total
     actual = report.yearly_total
