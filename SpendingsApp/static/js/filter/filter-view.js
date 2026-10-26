@@ -1,6 +1,7 @@
 
 import { initFilterformValidation } from "./filter-form-validate.js";
 import { renderSpendingsTbody } from "../render-spendings-tbody.js";
+import { initAmountWhitespaceStripping } from "../spending/strip-amount-whitespace.js";
 
 
 const FILTER_FORM_ID = 'filter-form';
@@ -8,6 +9,8 @@ const FILTER_FORM_ID = 'filter-form';
 $(document).ready(function() {
     prepareFilterForm();
     updateSpendings();
+    initAmountWhitespaceStripping('id_min_amount');
+    initAmountWhitespaceStripping('id_max_amount');
     
     const form = document.getElementById(FILTER_FORM_ID);
     form.addEventListener('change', updateSpendings);
