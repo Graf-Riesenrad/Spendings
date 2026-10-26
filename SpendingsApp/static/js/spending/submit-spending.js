@@ -2,15 +2,20 @@
 import { updateRecentSpendings } from './update-recent-spendings.js';
 import { initSpendingFormValidation } from './spending-form-validation.js';
 import { showMessageBox } from '../messaging/show-message-box.js';
+import { initAmountWhitespaceStripping } from './strip-amount-whitespace.js';
+
+
+const SPENDING_FORM_ID = 'submit-spending-form';
 
 $(document).ready(function() {
-    const form = document.getElementById('submit-spending-form');
+    const form = document.getElementById(SPENDING_FORM_ID);
     if (!form) {
         console.warn('Submit spending form not found — client-side validation may not work as expected.');
         return;
     }
     
-    initSpendingFormValidation("submit-spending-form");
+    initSpendingFormValidation(SPENDING_FORM_ID);
+    initAmountWhitespaceStripping();
 
 
     const submitButton = document.getElementById('submit-spending-btn');
@@ -21,7 +26,7 @@ $(document).ready(function() {
 });
 
 async function executeSubmit() {
-    const form = document.getElementById('submit-spending-form');
+    const form = document.getElementById(SPENDING_FORM_ID);
     if (!form || !$(form).valid()) {
         console.log('Form not found or invalid');
         return;
@@ -37,14 +42,14 @@ async function executeSubmit() {
 }
 
 function resetSpendingForm() {
-    const form = document.getElementById('submit-spending-form');
+    const form = document.getElementById(SPENDING_FORM_ID);
     if (form) {
         form.reset();
     }
 }
 
 function sendSpendingToServer() {
-    var formData = new FormData(document.getElementById('submit-spending-form'));
+    var formData = new FormData(document.getElementById(SPENDING_FORM_ID));
     
     return $.ajax({
         type: "POST",
