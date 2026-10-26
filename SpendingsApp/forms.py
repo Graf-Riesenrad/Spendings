@@ -13,7 +13,7 @@ class SpendingForm(forms.ModelForm):
     def __init__(self, *args, user: AbstractBaseUser = None, **kwargs):
         super().__init__(*args, **kwargs)
         if user is not None:
-            self.fields['category'].queryset = Category.objects.filter(user=user)
+            self.fields['category'].queryset = Category.objects.filter(user=user).order_by('name')
 
     class Meta:
         model = Spending
@@ -35,7 +35,7 @@ class SpendingFilterForm(forms.Form):
     def __init__(self, *args, user: AbstractBaseUser = None, **kwargs):
         super().__init__(*args, **kwargs)
         if user is not None:
-            self.fields['categories'].queryset = Category.objects.filter(user=user)
+            self.fields['categories'].queryset = Category.objects.filter(user=user).order_by('name')
 
 class CategoryForm(forms.ModelForm):
     class Meta:

@@ -26,7 +26,7 @@ class CategoryReportDatabaseGateway(CategoryReportGateway):
 
 
     def _get_all_categories(self, user: UserData) -> list[CategoryData]:
-        db_categories = Category.objects.filter(user__id=user.id)
+        db_categories = Category.objects.filter(user__id=user.id).order_by('name')
         categories = []
         for db_category in db_categories:
             category_data = CategoryData(id=db_category.id, name=db_category.name)
