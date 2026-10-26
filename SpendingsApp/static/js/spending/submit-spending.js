@@ -18,8 +18,7 @@ $(document).ready(function() {
     initAmountWhitespaceStripping();
 
 
-    const submitButton = document.getElementById('submit-spending-btn');
-    submitButton.addEventListener('click', async function(event) {
+    form.addEventListener('submit', async function(event) {
         event.preventDefault();
         await executeSubmit();
     });
