@@ -12,6 +12,8 @@ class YearReportRequestData:
 YEAR_FIELD = "year"
 USER_FIELD = "user"
 
+YEAR_ERROR_MESSAGE = "Invalid year format: expected an integer greater than or equal to 0."
+
 
 class YearReportDataExtractor:
 
@@ -27,9 +29,14 @@ class YearReportDataExtractor:
         if YEAR_FIELD not in request_data:
             raise ValueError(f"Missing required field: {YEAR_FIELD}")
 
-        year = request_data[YEAR_FIELD]
-        if not isinstance(year, int) or year < 0:
-            raise ValueError("Invalid year format: expected an integer greater than or equal to 0.")
+        raw_year = request_data[YEAR_FIELD]
+        try:
+            year = int(raw_year)
+        except Exception as e:
+            raise ValueError(YEAR_ERROR_MESSAGE) from e
+
+        if year < 0:
+            raise ValueError(YEAR_ERROR_MESSAGE)
 
         return year
 

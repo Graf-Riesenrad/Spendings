@@ -9,15 +9,13 @@ from SpendingsApp.finance.user_data import UserData
 from SpendingsApp.finance.year_reporting.category_report_gateway import CategoryReportGateway
 from SpendingsApp.finance.year_reporting.year_report import CategoryReport
 
-from ...database_category_converter import DatabaseCategoryConverter
-
 
 
 class CategoryReportDatabaseGateway(CategoryReportGateway):
 
-    def __init__(self, monthly_average_calc: MonthlyAverageCalculator, category_converter: DatabaseCategoryConverter):
+    def __init__(self, monthly_average_calc: MonthlyAverageCalculator):
         self._monthly_average_calc = monthly_average_calc
-        self._category_converter = category_converter
+
 
     def get_category_reports(self, year: int, user: UserData) -> list[CategoryReport]:
         category_reports = []
@@ -26,13 +24,15 @@ class CategoryReportDatabaseGateway(CategoryReportGateway):
             category_reports.append(report)
         return category_reports
 
+
     def _get_all_categories(self, user: UserData) -> list[CategoryData]:
         db_categories = Category.objects.filter(user__id=user.id)
         categories = []
         for db_category in db_categories:
-            category_data = self._category_converter.convert_to_category(db_category)
+            category_data = CategoryData(id=db_category.id, name=db_category.name)
             categories.append(category_data)
         return categories
+
 
     def _get_category_report(self, year: int, category: CategoryData, user: UserData) -> CategoryReport:
         monthly_totals = self._get_monthly_totals(year, category)
@@ -48,19 +48,22 @@ class CategoryReportDatabaseGateway(CategoryReportGateway):
             totals.append(self._get_total(start, end, category))
         return totals
 
+
     def _get_month_end(self, year: int, month: int) -> date:
         if month == 12:
             return date(year, 12, 31)
         else:
             return date(year, month + 1, 1) - timedelta(days=1)
 
+
     def _get_total(self, start: date, end: date, category: CategoryData) -> float:
+        db_category = Category.objects.get(id=category.id)
         return sum(
             spending.amount
             for spending in Spending.objects.filter(
-                date__gte=start,
-                date__lte=end,
-                category=self._category_converter.to_database_category(category)
+                spendingDate__gte=start,
+                spendingDate__lte=end,
+                category=db_category
             )
         )
 

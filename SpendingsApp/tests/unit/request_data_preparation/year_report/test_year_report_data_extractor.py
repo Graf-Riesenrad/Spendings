@@ -39,12 +39,14 @@ def test_extract_shouldRaiseExceptionIfYearIsInvalid(
     assert expected == str(error.value)
 
 
-@pytest.mark.parametrize("year", [2020, 0, 9999])
+@pytest.mark.parametrize("year", [2020, 0, 9999, '2025'])
 def test_extract_shouldReturnYearIfValid(
-        data_extractor: YearReportDataExtractor, year: int) -> None:
+        data_extractor: YearReportDataExtractor, year: any) -> None:
     report_data = data_extractor.extract_year_report_data(get_example_request_data(year))
 
-    assert year == report_data.year
+    expected = int(year)
+    actual = report_data.year
+    assert expected == actual
 
 
 def test_extract_shouldRaiseExceptionIfUserIsMissing(

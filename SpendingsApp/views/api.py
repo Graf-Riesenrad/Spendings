@@ -28,6 +28,7 @@ class YearReportApi(AuthenticatedView):
         try:
             extracted_data = self._year_report_data_extractor.extract_year_report_data(input_data)
         except ValueError as e:
+            print(f"Error extracting year report data: {e}")
             return HttpResponseBadRequest(str(e))
 
         year_report = self._year_report_assembler.assemble_year_report(extracted_data.year, extracted_data.user)

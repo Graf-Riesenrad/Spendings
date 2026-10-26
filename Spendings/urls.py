@@ -51,4 +51,5 @@ urlpatterns = [
     path('category/delete/<int:id>', category.CategoryDeleteApi.as_view(), name='category_delete'),
 
     path('average/monthly', api.MonthlyAverageApi.as_view(), name='monthly_average'),
+    path('year/report', api.YearReportApi.as_view(), name='year_report'),
 ]

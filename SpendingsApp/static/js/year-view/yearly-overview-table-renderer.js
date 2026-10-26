@@ -1,22 +1,19 @@
 
 import { MonthlyAccordionRenderer } from "./monthly-accordion-renderer.js";
+import { CategoryReport } from "./category-report.js";
 
 const LOCALE = 'de-CH'
-
-export class CategoryReport {
-    constructor(categoryName, monthlyTotals, yearlyTotal, average) {
-        this.categoryName = categoryName;
-        this.monthlyTotals = monthlyTotals;
-        this.yearlyTotal = yearlyTotal
-        this.average = average
-    }
-}
 
 export class YearlyOverviewTableRenderer {
     constructor() {
         this.accordionRenderer = new MonthlyAccordionRenderer();
     }
 
+    /**
+     * @param {CategoryReport[]} categoryReports
+     * @param {number} yearlyTotal
+     * @returns {HTMLTableElement}
+     */
     render(categoryReports, yearlyTotal) {
         const table = document.createElement('table');
         table.classList.add('table', 'table-hover');
@@ -45,14 +42,15 @@ export class YearlyOverviewTableRenderer {
         return thead;
     }
     
+    /** @param {CategoryReport[]} categoryReports */
     #renderTableBody(categoryReports) {
         const tbody = document.createElement('tbody');
         tbody.classList.add('table-group-divider');
 
         categoryReports.forEach((report, index) => {
-            const accordion = this.accordionRenderer.render(index, report.categoryName, report.monthlyTotals);
+            const accordion = this.accordionRenderer.render(index, report.category.name, report.monthlyTotals);
 
-            const average = parseFloat(report.average);
+            const average = parseFloat(report.monthlyAverage);
             const yearlyTotal = parseFloat(report.yearlyTotal);
 
             const row = document.createElement('tr');

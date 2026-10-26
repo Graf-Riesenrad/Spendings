@@ -11,7 +11,7 @@ const YEAR_FORM_MESSAGES = {
     year: "Please enter a valid year (between 1900 and 2100)"
 };
 
-export function validateYearForm(formId) {
+export function initYearFormValidation(formId) {
     $(formId).validate({
         rules: YEAR_FORM_RULES,
         messages: YEAR_FORM_MESSAGES
