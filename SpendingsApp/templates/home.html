@@ -20,22 +20,22 @@
                         <i class="bi bi-calendar-event"></i>
                     </button>
                 </div>
-                <div class="col-6">
-                    {{ spendingForm.description }}
+                <div class="col">
+                    {{ spendingForm.category }}
                 </div>
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col">
-                {{ spendingForm.amount }}
+            <div class="col-6">
+                {{ spendingForm.description }}
             </div>
             <div class="col">
-                {{ spendingForm.category }}
+                {{ spendingForm.amount }}
             </div>
         </div>
         <div class="row mb-3">
             <div class="col">
-                <button type="button" id="submit-spending-btn" class="btn btn-outline-secondary w-100">
+                <button type="submit" id="submit-spending-btn" class="btn btn-outline-secondary w-100">
                     <i class="bi bi-database-add"></i>
                 </button>
             </div>

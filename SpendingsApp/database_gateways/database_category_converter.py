@@ -7,20 +7,25 @@ from SpendingsApp.request_data_preparation.category_converter import CategoryCon
 
 class DatabaseCategoryConverter(CategoryConverter):
     def convert_to_category(self, input: any) -> CategoryData:
+        if isinstance(input, CategoryData):
+            return input
+
         category = self._read_from_database(input)
         return CategoryData(id=category.id, name=category.name)
     
 
     def _read_from_database(self, input: any) -> Category:
         try:
-            category = self._try_convert_options(input)
+            return self._try_options(input)
         except:
             message = f"Cannot convert '{input}' to Category. Expected either a Category, an int, a str or a dict with 'id' or 'name' key."
             raise ValueError(message)
         
-        return category
     
-    def _try_convert_options(self, input) -> Category:
+    def _try_options(self, input) -> Category:
+        if isinstance(input, Category):
+            return input
+
         try:
             return Category.objects.get(id=int(input))
         except:
