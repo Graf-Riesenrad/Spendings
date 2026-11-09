@@ -2,7 +2,7 @@
 import { updateRecentSpendings } from './update-recent-spendings.js';
 import { initSpendingFormValidation } from './spending-form-validation.js';
 import { showMessageBox } from '../messaging/show-message-box.js';
-import { initAmountWhitespaceStripping } from './strip-amount-whitespace.js';
+import { initWhitespaceStripping, cleanAmount, cleanDescription } from '../strip-field-whitespace.js';
 
 
 const SPENDING_FORM_ID = 'submit-spending-form';
@@ -15,7 +15,8 @@ $(document).ready(function() {
     }
     
     initSpendingFormValidation(SPENDING_FORM_ID);
-    initAmountWhitespaceStripping();
+    initWhitespaceStripping('id_amount', cleanAmount);
+    initWhitespaceStripping('id_description', cleanDescription);
 
 
     form.addEventListener('submit', async function(event) {
